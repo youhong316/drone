@@ -1,3 +1,17 @@
+// Copyright 2018 Drone.IO Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package datastore
 
 import (
@@ -7,7 +21,6 @@ import (
 
 	"github.com/drone/drone/store"
 	"github.com/drone/drone/store/datastore/ddl"
-	"github.com/rubenv/sql-migrate"
 	"github.com/russross/meddler"
 
 	"github.com/Sirupsen/logrus"
@@ -116,13 +129,7 @@ func pingDatabase(db *sql.DB) (err error) {
 // helper function to setup the databsae by performing
 // automated database migration steps.
 func setupDatabase(driver string, db *sql.DB) error {
-	var migrations = &migrate.AssetMigrationSource{
-		Asset:    ddl.Asset,
-		AssetDir: ddl.AssetDir,
-		Dir:      driver,
-	}
-	_, err := migrate.Exec(db, driver, migrations, migrate.Up)
-	return err
+	return ddl.Migrate(driver, db)
 }
 
 // helper function to setup the meddler default driver
